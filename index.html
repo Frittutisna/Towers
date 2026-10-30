@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Towers: Network Optimization Game</title>
+    <link rel="icon" type="image/svg+xml" href="helper/favicon.svg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = {darkMode: 'class'}</script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://frittutisna.github.io/Towers/">
+    <meta property="og:title" content="Towers: Network Optimization Game">
+    <meta property="og:description" content="Can you connect all Capacity tiles to a Tower within 15 cable lengths and minimize build cost/time?">
+    <meta property="og:image" content="https://files.catbox.moe/ccdo5e.jpg">
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://frittutisna.github.io/Towers/">
+    <meta property="twitter:title" content="Towers: Network Optimization Game">
+    <meta property="twitter:description" content="Can you connect all Capacity tiles to a Tower within 15 cable lengths and minimize build cost/time?">
+    <meta property="twitter:image" content="https://files.catbox.moe/ccdo5e.jpg">
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white min-h-screen flex flex-col justify-between overflow-x-hidden transition-colors duration-200">
+    <header class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-4 py-2 sticky top-0 z-30 transition-colors duration-200">
+        <div class="max-w-7xl mx-auto grid grid-cols-2 lg:flex lg:items-center lg:justify-center gap-x-3 gap-y-2 lg:gap-1.5">
+            <div class="row-span-2 lg:row-span-1 flex items-center gap-2.5 lg:mr-2.5">
+                <div class="w-16 h-16 lg:w-9 lg:h-9 rounded-2xl lg:rounded-xl bg-[#329632] flex items-center justify-center"><i class="fa-solid fa-tower-broadcast text-white text-3xl lg:text-lg"></i></div>
+                <div class="hidden lg:flex flex-col items-center">
+                    <h1 class="text-xl font-extrabold text-slate-900 dark:text-white leading-none" data-i18n="gameTitle">Towers</h1>
+                    <span class="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Frittutisna</span>
+                </div>
+            </div>
+            <div class="flex items-center justify-end gap-1.5">
+                <button id="themeToggle" title="Toggle Light/Dark Mode" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 flex items-center justify-center text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition cursor-pointer"><i id="themeIcon" class="fa-solid fa-sun text-sm"></i></button>
+                <button id="langToggle" title="Toggle Language" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 flex items-center justify-center text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition cursor-pointer text-xs font-bold">EN</button>
+                <div id="seedContainer" class="flex items-center bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg px-2 py-1 text-xs text-slate-900 dark:text-white gap-1.5 h-8 box-border transition-colors duration-200">
+                    <input type="text" id="seedInput" maxlength="6" class="bg-transparent font-bold text-slate-900 dark:text-white focus:outline-none w-14 text-left uppercase" value="021005">
+                    <button id="btnLoadSeed" title="Load Seed" class="hover:text-[#329632] transition-colors"><i class="fa-solid fa-arrows-rotate"></i></button>
+                    <button id="btnRandomSeed" title="Random Seed" class="hover:text-[#329632] transition-colors"><i class="fa-solid fa-dice"></i></button>
+                </div>
+            </div>
+            <div id="actionButtonsContainer" class="grid grid-cols-2 w-full lg:flex lg:w-auto items-center justify-end gap-1.5">
+                <button id="btnReset" class="w-full lg:w-auto bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-white border border-slate-300 dark:border-slate-700 px-3 h-8 rounded-lg text-xs font-semibold flex items-center justify-center gap-1 transition box-border"><i class="fa-solid fa-trash-can"></i> <span data-i18n="btnClear">Clear</span></button>
+                <button id="btnFinish" class="w-full lg:w-auto bg-[#329632] hover:bg-[#287d28] text-white font-bold px-3 h-8 rounded-lg text-xs flex items-center justify-center gap-1 transition box-border"><i class="fa-solid fa-circle-check"></i> <span data-i18n="btnFinish">Finish</span></button>
+            </div>
+        </div>
+    </header>
+    <main class="max-w-7xl w-full mx-auto p-3 grid grid-cols-1 lg:grid-cols-12 gap-3 flex-grow">
+        <div class="lg:col-span-8 flex flex-col gap-3">
+            <div class="grid grid-cols-[1fr_1fr_auto] lg:grid-cols-[1fr_1fr_1fr_1fr_auto_auto] gap-1.5 items-stretch">
+                <button data-tool="small" class="tool-btn order-1 lg:order-1 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded-xl px-3 py-2 flex flex-col justify-between hover:border-slate-400 dark:hover:border-slate-700 transition relative h-12 shadow-sm dark:shadow-none">
+                    <div class="flex justify-between items-center w-full">
+                        <span class="text-[12px] font-bold text-slate-800 dark:text-white leading-tight" data-i18n="toolSmall">Small Cable</span>
+                        <span class="w-3 h-0.5 border-t-2 border-dashed border-slate-600 dark:border-white"></span>
+                    </div>
+                    <div class="flex justify-between items-end w-full text-[12px]">
+                        <span class="text-slate-600 dark:text-white text-[12px]">2/1</span>
+                        <span class="text-slate-600 dark:text-white text-[12px]">1</span>
+                    </div>
+                </button>
+                <button data-tool="large" class="tool-btn tool-btn-active order-2 lg:order-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded-xl px-3 py-2 flex flex-col justify-between hover:border-slate-400 dark:hover:border-slate-700 transition relative h-12 shadow-sm dark:shadow-none">
+                    <div class="flex justify-between items-center w-full">
+                        <span class="text-[12px] font-bold text-slate-800 dark:text-white leading-tight" data-i18n="toolLarge">Large Cable</span>
+                        <span class="w-3 h-1 bg-slate-800 dark:bg-white rounded-full"></span>
+                    </div>
+                    <div class="flex justify-between items-end w-full text-[12px]">
+                        <span class="text-slate-600 dark:text-white text-[12px]">3/2</span>
+                        <span class="text-slate-600 dark:text-white text-[12px]">2</span>
+                    </div>
+                </button>
+                <button data-tool="towerCable" class="tool-btn order-4 lg:order-3 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded-xl px-3 py-2 flex flex-col justify-between hover:border-slate-400 dark:hover:border-slate-700 transition relative h-12 shadow-sm dark:shadow-none">
+                    <div class="flex justify-between items-center w-full">
+                        <span class="text-[12px] font-bold text-[#fa3232] dark:text-[#fa9696] leading-tight" data-i18n="toolTowerCable">Tower Cable</span>
+                        <span class="w-3 h-1 bg-[#fa3232] dark:bg-[#fa9696] rounded-full"></span>
+                    </div>
+                    <div class="flex justify-between items-end w-full text-[12px]">
+                        <span class="text-[#fa3232] dark:text-[#fa9696] text-[12px]">40/30</span>
+                        <span class="text-[#fa3232] dark:text-[#fa9696] text-[12px]">&infin;</span>
+                    </div>
+                </button>
+                <button data-tool="tower" class="tool-btn order-5 lg:order-4 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded-xl px-3 py-2 flex flex-col justify-between hover:border-slate-400 dark:hover:border-slate-700 transition relative h-12 shadow-sm dark:shadow-none">
+                    <div class="flex justify-between items-center w-full">
+                        <span class="text-[12px] font-bold text-[#fa3232] dark:text-[#fa9696] leading-tight" data-i18n="toolExtraTower">Extra Tower</span>
+                        <div class="w-3.5 h-3.5 rounded-full border-[3.5px] border-[#fa3232] dark:border-[#fa9696] box-border"></div>
+                    </div>
+                    <div class="flex justify-between items-end w-full text-[12px]">
+                        <span class="text-[#fa3232] dark:text-[#fa9696] text-[12px]">1000/60</span>
+                        <span></span>
+                    </div>
+                </button>
+                <button id="btnUndo" class="w-12 order-3 lg:order-5 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded-xl flex items-center justify-center hover:border-slate-400 dark:hover:border-slate-700 transition relative h-12 shadow-sm dark:shadow-none" title="Undo"><i class="fa-solid fa-rotate-left text-lg text-slate-700 dark:text-white"></i></button>
+                <button data-tool="eraser" class="tool-btn w-12 order-6 lg:order-6 bg-[#329632] text-white border border-[#329632] rounded-xl flex items-center justify-center hover:opacity-90 transition relative h-12"><i class="fa-solid fa-eraser text-lg text-white"></i></button>
+            </div>
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 flex flex-col items-center justify-center relative w-full transition-colors duration-200">
+                <div id="boardWrapper" class="relative aspect-square w-full">
+                    <div id="topLabels" class="hidden lg:flex absolute top-0 left-6 right-6 h-6 justify-between items-center text-[12px] font-bold text-slate-700 dark:text-white select-none pointer-events-none"></div>
+                    <div id="bottomLabels" class="hidden lg:flex absolute bottom-0 left-6 right-6 h-6 justify-between items-center text-[12px] font-bold text-slate-700 dark:text-white select-none pointer-events-none"></div>
+                    <div id="leftLabels" class="hidden lg:grid absolute top-6 bottom-6 left-0 w-6 grid-rows-[repeat(20,minmax(0,1fr))] items-center justify-items-center text-[12px] font-bold text-slate-700 dark:text-white select-none pointer-events-none"></div>
+                    <div id="rightLabels" class="hidden lg:grid absolute top-6 bottom-6 right-0 w-6 grid-rows-[repeat(20,minmax(0,1fr))] items-center justify-items-center text-[12px] font-bold text-slate-700 dark:text-white select-none pointer-events-none"></div>
+                    <div class="absolute inset-0 lg:inset-6 overflow-hidden rounded border border-slate-300 dark:border-slate-800 bg-slate-100 dark:bg-slate-955 flex items-center justify-center"><canvas id="gameCanvas" class="cursor-crosshair w-full h-full object-contain"></canvas></div>
+                    <div id="magnifier" class="absolute pointer-events-none hidden w-32 h-32 rounded-full border-4 border-slate-700 dark:border-slate-300 shadow-2xl overflow-hidden bg-white dark:bg-slate-900 -translate-x-1/2 -translate-y-36 z-40"><canvas id="magnifierCanvas" width="128" height="128" class="w-full h-full"></canvas></div>
+                </div>
+            </div>
+        </div>
+        <div class="lg:col-span-4 flex flex-col gap-3">
+            <div class="bg-[#329632] border border-[#287d28] rounded-xl px-4 shadow-md flex items-center justify-between h-12">
+                <div class="text-xl font-bold text-white" data-i18n="labelScore">Score</div>
+                <div id="statScore" class="text-xl font-bold text-white">0</div>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div class="bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col justify-between shadow-sm dark:shadow-none transition-colors duration-200">
+                    <div class="text-base font-bold text-slate-900 dark:text-white" data-i18n="labelBuildCostTime">Build Cost/Time</div>
+                    <div class="text-base font-bold text-slate-900 dark:text-white">
+                        <span id="statCost">0</span><span class="text-base font-bold text-slate-900 dark:text-white">/</span><span id="statTime">0</span>
+                    </div>
+                </div>
+                <div class="bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col justify-between shadow-sm dark:shadow-none transition-colors duration-200">
+                    <div class="text-base font-bold text-slate-900 dark:text-white" data-i18n="labelDrawTime">Draw Time</div>
+                    <div id="timerDisplay" class="text-base font-bold text-slate-900 dark:text-white">0.000</div>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div id="statCapacityCard" class="bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-none transition-colors duration-200">
+                    <div class="text-base font-bold text-slate-900 dark:text-white" data-i18n="labelCapacityServed">Served Capacity</div>
+                    <div id="statCapacity" class="text-base font-bold text-slate-900 dark:text-white">0/35</div>
+                </div>
+                <div class="bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-none transition-colors duration-200">
+                    <div class="text-base font-bold text-slate-900 dark:text-white" data-i18n="labelRiverCrossings">River Crossings</div>
+                    <div id="statRiverCrossings" class="text-base font-bold text-slate-900 dark:text-white">0</div>
+                </div>
+            </div>
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 shadow-md text-xs text-slate-700 dark:text-white space-y-1.5 transition-colors duration-200">
+                <div class="font-bold text-slate-900 dark:text-white text-xl" data-i18n="rulesTitle">Rules</div>
+                <ul class="list-disc pl-4 space-y-1">
+                    <li class="text-sm"><b data-i18n="rule1">Connect all 10 Capacity tiles to a <b class="text-[#fa3232] dark:text-[#fa9696]">Tower</b> within 15 cable lengths and minimize build cost/time</b></li>
+                    <li class="text-sm" data-i18n="rule2">
+                        Lay <b class="text-slate-900 dark:text-white">Small/Large Cables</b> from <b class="text-[#fa3232] dark:text-[#fa9696]">Towers</b> to <b class="text-slate-900 dark:text-white">Capacity</b> tiles, 
+                        or place <b class="text-[#fa3232] dark:text-[#fa9696]">Extra Towers</b> and connect them using <b class="text-[#fa3232] dark:text-[#fa9696]">Tower Cables</b>
+                    </li>
+                    <li class="text-sm" data-i18n="rule3">You can't build on <b class="text-bold text-[#329632] dark:text-[#96fa96]">Mountain</b> tiles</li>
+                    <li class="text-sm" data-i18n="rule4">Laying cables on <b class="text-bold text-[#323296] dark:text-[#9696fa]">River</b> tiles costs 40/30 per cable-tile</li>
+                    <li class="text-sm" data-i18n="rule5">
+                        Click <span class="inline-flex items-center gap-1 bg-[#329632] text-white px-2 py-0.5 rounded text-xs font-bold shadow-sm"> <i class="fa-solid fa-circle-check"></i> Finish</span> 
+                        after all <b class="text-slate-900 dark:text-white">Capacity</b> tiles are fully served to lock your score (Cost &times; Build Time + Draw Time)
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </main>
+    <div id="resultModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-3 hidden">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-2xl w-full p-3 shadow-2xl relative grid grid-cols-1 md:grid-cols-2 items-stretch gap-2 transition-colors duration-200">
+            <div class="flex flex-col items-center justify-center bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl h-full w-full relative overflow-hidden"><canvas id="modalCanvas" class="w-full h-full object-contain rounded-lg border border-slate-300 dark:border-slate-800"></canvas></div>
+            <div class="flex flex-col justify-between space-y-1.5">
+                <div class="space-y-1.5">
+                    <div class="bg-[#329632] border border-[#287d28] rounded-xl px-2.5 shadow-md flex items-center justify-between h-12">
+                        <div class="text-xl font-bold text-white" data-i18n="labelScore">Score</div>
+                        <div id="modalStatScore" class="text-xl font-bold text-white">0</div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-1.5">
+                        <div class="bg-slate-100 dark:bg-slate-950 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col justify-between">
+                            <div class="text-xs font-bold text-slate-900 dark:text-white" data-i18n="labelBuildCostTime">Build Cost/Time</div>
+                            <div class="text-sm font-bold text-slate-900 dark:text-white">
+                                <span id="modalStatCost">0</span><span>/</span><span id="modalStatTime">0</span>
+                            </div>
+                        </div>
+                        <div class="bg-slate-100 dark:bg-slate-950 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col justify-between">
+                            <div class="text-xs font-bold text-slate-900 dark:text-white" data-i18n="labelDrawTime">Draw Time</div>
+                            <div id="modalTimerDisplay" class="text-sm font-bold text-slate-900 dark:text-white">0.000</div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-1.5">
+                        <div id="modalStatCapacityCard" class="bg-slate-100 dark:bg-slate-950 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800">
+                            <div class="text-xs font-bold text-slate-900 dark:text-white" data-i18n="labelCapacityServed">Served Capacity</div>
+                            <div id="modalStatCapacity" class="text-sm font-bold text-slate-900 dark:text-white">0/35</div>
+                        </div>
+                        <div class="bg-slate-100 dark:bg-slate-950 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800">
+                            <div class="text-xs font-bold text-slate-900 dark:text-white" data-i18n="labelRiverCrossings">River Crossings</div>
+                            <div id="modalStatRiverCrossings" class="text-sm font-bold text-slate-900 dark:text-white">0</div>
+                        </div>
+                    </div>
+                    <div class="relative">
+                        <textarea id="shareResultText" readonly class="w-full h-36 bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-2 text-xs text-slate-700 dark:text-slate-300 focus:outline-none resize-none font-mono"></textarea>
+                        <button id="btnCopyShare" class="absolute top-2 right-2 text-slate-700 dark:text-white p-1 text-xs transition flex items-center justify-center"><i class="fa-regular fa-copy text-sm"></i></button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-3 gap-1.5">
+                    <button id="btnDownloadMap" class="w-full bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-white border border-slate-300 dark:border-slate-700 py-2.5 rounded-xl font-bold text-xs shadow-md transition flex items-center justify-center" title="Download Map"><span data-i18n="btnDownloadMap">Download</span></button>
+                    <button id="btnCloseModal" class="w-full bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-white border border-slate-300 dark:border-slate-700 py-2.5 rounded-xl font-bold text-xs shadow-md transition flex items-center justify-center" data-i18n="btnKeepPlaying">Keep Playing</button>
+                    <button id="btnNewSeedModal" class="w-full bg-[#329632] hover:bg-[#287d28] text-white py-2.5 rounded-xl font-bold text-xs shadow-md transition flex items-center justify-center" data-i18n="btnNextSeed">Next Seed</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="helper/constants.js"></script>
+    <script src="helper/utils.js"></script>
+    <script src="helper/network.js"></script>
+    <script src="helper/map.js"></script>
+    <script src="helper/render.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
