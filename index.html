@@ -22,26 +22,28 @@
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white min-h-screen flex flex-col justify-between overflow-x-hidden transition-colors duration-200">
     <header class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-4 py-2 sticky top-0 z-30 transition-colors duration-200">
-        <div class="max-w-7xl mx-auto grid grid-cols-2 lg:flex lg:items-center lg:justify-center gap-x-3 gap-y-2 lg:gap-1.5">
-            <div class="row-span-2 lg:row-span-1 flex items-center gap-2.5 lg:mr-2.5">
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-3 lg:justify-center lg:gap-1.5">
+            <div class="flex items-center gap-2.5 lg:mr-2.5">
                 <div class="w-16 h-16 lg:w-9 lg:h-9 rounded-2xl lg:rounded-xl bg-[#329632] flex items-center justify-center"><i class="fa-solid fa-tower-broadcast text-white text-3xl lg:text-lg"></i></div>
                 <div class="hidden lg:flex flex-col items-center">
                     <h1 class="text-xl font-extrabold text-slate-900 dark:text-white leading-none" data-i18n="gameTitle">Towers</h1>
                     <span class="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Frittutisna</span>
                 </div>
             </div>
-            <div class="flex items-center justify-end gap-1.5">
-                <button id="themeToggle" title="Toggle Light/Dark Mode" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 flex items-center justify-center text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition cursor-pointer"><i id="themeIcon" class="fa-solid fa-sun text-sm"></i></button>
-                <button id="langToggle" title="Toggle Language" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 flex items-center justify-center text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition cursor-pointer text-xs font-bold">EN</button>
-                <div id="seedContainer" class="flex items-center bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg px-2 py-1 text-xs text-slate-900 dark:text-white gap-1.5 h-8 box-border transition-colors duration-200">
+            <div class="flex flex-col gap-1.5 lg:flex-row lg:items-center">
+                <div id="seedContainer" class="flex items-center justify-between bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg px-2 py-1 text-xs text-slate-900 dark:text-white gap-1.5 h-8 w-full lg:w-auto box-border transition-colors duration-200">
                     <input type="text" id="seedInput" maxlength="6" class="bg-transparent font-bold text-slate-900 dark:text-white focus:outline-none w-14 text-left uppercase" value="021005">
-                    <button id="btnLoadSeed" title="Load Seed" class="hover:text-[#329632] transition-colors"><i class="fa-solid fa-arrows-rotate"></i></button>
-                    <button id="btnRandomSeed" title="Random Seed" class="hover:text-[#329632] transition-colors"><i class="fa-solid fa-dice"></i></button>
+                    <div class="flex items-center gap-1.5">
+                        <button id="btnLoadSeed" title="Load Seed" class="hover:text-[#329632] transition-colors"><i class="fa-solid fa-arrows-rotate"></i></button>
+                        <button id="btnRandomSeed" title="Random Seed" class="hover:text-[#329632] transition-colors"><i class="fa-solid fa-dice"></i></button>
+                    </div>
                 </div>
-            </div>
-            <div id="actionButtonsContainer" class="grid grid-cols-2 w-full lg:flex lg:w-auto items-center justify-end gap-1.5">
-                <button id="btnReset" class="w-full lg:w-auto bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-white border border-slate-300 dark:border-slate-700 px-3 h-8 rounded-lg text-xs font-semibold flex items-center justify-center gap-1 transition box-border"><i class="fa-solid fa-trash-can"></i> <span data-i18n="btnClear">Clear</span></button>
-                <button id="btnFinish" class="w-full lg:w-auto bg-[#329632] hover:bg-[#287d28] text-white font-bold px-3 h-8 rounded-lg text-xs flex items-center justify-center gap-1 transition box-border"><i class="fa-solid fa-circle-check"></i> <span data-i18n="btnFinish">Finish</span></button>
+                <div class="flex items-center justify-between gap-1.5">
+                    <button id="themeToggle" title="Toggle Light/Dark Mode" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 flex items-center justify-center text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition cursor-pointer"><i id="themeIcon" class="fa-solid fa-sun text-sm"></i></button>
+                    <button id="langToggle" title="Toggle Language" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 flex items-center justify-center text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition cursor-pointer text-xs font-bold">EN</button>
+                    <button id="btnReset" title="Clear" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 flex items-center justify-center text-slate-800 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition cursor-pointer box-border"><i class="fa-solid fa-trash-can text-sm"></i></button>
+                    <button id="btnFinish" title="Finish" class="w-8 h-8 rounded-lg bg-[#329632] hover:bg-[#287d28] text-white flex items-center justify-center transition cursor-pointer box-border"><i class="fa-solid fa-circle-check text-sm"></i></button>
+                </div>
             </div>
         </div>
     </header>
@@ -140,7 +142,7 @@
                     <li class="text-sm" data-i18n="rule3">You can't build on <b class="text-bold text-[#329632] dark:text-[#96fa96]">Mountain</b> tiles</li>
                     <li class="text-sm" data-i18n="rule4">Laying cables on <b class="text-bold text-[#323296] dark:text-[#9696fa]">River</b> tiles costs 40/30 per cable-tile</li>
                     <li class="text-sm" data-i18n="rule5">
-                        Click <span class="inline-flex items-center gap-1 bg-[#329632] text-white px-2 py-0.5 rounded text-xs font-bold shadow-sm"> <i class="fa-solid fa-circle-check"></i> Finish</span> 
+                        Click <span class="inline-flex items-center gap-1 bg-[#329632] text-white px-2 py-0.5 rounded text-xs font-bold shadow-sm"> <i class="fa-solid fa-circle-check"></i></span> 
                         after all <b class="text-slate-900 dark:text-white">Capacity</b> tiles are fully served to lock your score (Cost &times; Build Time + Draw Time)
                     </li>
                 </ul>
