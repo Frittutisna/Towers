@@ -62,6 +62,16 @@ function formatTimeDisplay(sec) {
     return `${mins}:${secStr}`;
 }
 
+function formatNumber(num) {
+    if (typeof num !== 'number') return num;
+    let locale = 'en-US';
+
+    if (currentLang === 'ID') locale = 'id-ID';
+    if (currentLang === 'JP') locale = 'ja-JP';
+
+    return num.toLocaleString(locale);
+}
+
 const isOctilinearlyAdjacent    = (x1, y1, x2, y2)  => Math.abs(x1 - x2) <= 1 && Math.abs(y1 - y2) <= 1;
 const isAdjacentToStartingTower = (x, y)            => isOctilinearlyAdjacent(x, y, mapData.startingTower.x, mapData.startingTower.y);
 const isEdgeTile                = (x, y)            => x === 0 || x === GRID_SIZE - 1 || y === 0 || y === GRID_SIZE - 1;

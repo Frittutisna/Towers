@@ -1,4 +1,7 @@
-# Towers v1.0.0
+# Towers v1.0.1
+
+## Changelogs
+* Localized numbers
 
 ## Rules
 * Connect all Capacity tiles to a **Tower** within 15 cable lengths and minimize build cost/time

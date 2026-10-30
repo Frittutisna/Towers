@@ -284,11 +284,11 @@ function updateMetrics() {
         startTimer();
     }
 
-    document.getElementById('statCapacity').innerText       = `${servedCapacity}/${totalCapacity}`;
-    document.getElementById('statRiverCrossings').innerText = riverCrossings;
-    document.getElementById('statCost').innerText           = totalCost.toLocaleString();
-    document.getElementById('statTime').innerText           = totalDays.toLocaleString();
-    document.getElementById('statScore').innerText          = typeof finalScore === 'number' ? finalScore.toLocaleString() : finalScore;
+    document.getElementById('statCapacity')         .innerText = `${servedCapacity}/${totalCapacity}`;
+    document.getElementById('statRiverCrossings')   .innerText = riverCrossings;
+    document.getElementById('statCost')             .innerText = formatNumber(totalCost);
+    document.getElementById('statTime')             .innerText = formatNumber(totalDays);
+    document.getElementById('statScore')            .innerText = typeof finalScore === 'number' ? formatNumber(finalScore) : finalScore;
 
     const capacityCard = document.getElementById('statCapacityCard');
 
@@ -487,12 +487,12 @@ document.getElementById('btnFinish').addEventListener('click', () => {
     clearInterval(timerInterval);
     timerRunning = false;
 
-    document.getElementById('modalStatScore').innerText           = typeof res.score === 'number' ? res.score.toLocaleString() : res.score;
-    document.getElementById('modalStatCost').innerText            = res.cost.toLocaleString();
-    document.getElementById('modalStatTime').innerText            = res.buildTime.toLocaleString();
-    document.getElementById('modalTimerDisplay').innerText        = formatTimeDisplay(res.drawTime);
-    document.getElementById('modalStatCapacity').innerText        = `${res.servedCapacity}/35`;
-    document.getElementById('modalStatRiverCrossings').innerText  = document.getElementById('statRiverCrossings').innerText;
+    document.getElementById('modalStatScore')           .innerText = typeof res.score === 'number' ? formatNumber(res.score) : res.score;
+    document.getElementById('modalStatCost')            .innerText = formatNumber(res.cost);
+    document.getElementById('modalStatTime')            .innerText = formatNumber(res.buildTime);
+    document.getElementById('modalTimerDisplay')        .innerText = formatTimeDisplay(res.drawTime);
+    document.getElementById('modalStatCapacity')        .innerText = `${res.servedCapacity}/35`;
+    document.getElementById('modalStatRiverCrossings')  .innerText = document.getElementById('statRiverCrossings').innerText;
 
     const modalCanvas = document.getElementById('modalCanvas');
     drawBoardToCanvas(modalCanvas);
@@ -500,10 +500,10 @@ document.getElementById('btnFinish').addEventListener('click', () => {
     const t         = TRANSLATIONS[currentLang];
     const shareText = `🗼 ${t.gameTitle}
 ${t.shareSeed}: ${currentSeed}
-${t.shareScore}: ${document.getElementById('modalStatScore').innerText}
-${t.shareBuildCost}: ${document.getElementById('modalStatCost').innerText}
-${t.shareBuildTime}: ${document.getElementById('modalStatTime').innerText}
-${t.shareDrawTime}: ${document.getElementById('modalTimerDisplay').innerText}
+${t.shareScore}: ${document     .getElementById('modalStatScore')       .innerText}
+${t.shareBuildCost}: ${document .getElementById('modalStatCost')        .innerText}
+${t.shareBuildTime}: ${document .getElementById('modalStatTime')        .innerText}
+${t.shareDrawTime}: ${document  .getElementById('modalTimerDisplay')    .innerText}
 https://frittutisna.github.io/Towers/`;
 
     document.getElementById('shareResultText').value = shareText;
