@@ -416,8 +416,11 @@ canvas.addEventListener('touchstart', (e) => {
         isDragging          = true;
         dragStartCell       = gridPos;
         currentHoverCell    = gridPos;
+
         updateMagnifier(touch.clientX, touch.clientY);
     }
+
+    render();
 });
 
 canvas.addEventListener('touchmove', (e) => {
