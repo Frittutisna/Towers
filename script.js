@@ -174,7 +174,10 @@ function tryAddCable(x1, y1, x2, y2, type) {
     };
 
     let pathCells = getLineCells(x1, y1, x2, y2);
-    for (let cell of pathCells) if (mapData.mountainTiles.has(`${cell.x},${cell.y}`)) return false;
+    for (let cell of pathCells) {
+        if (mapData.mountainTiles.has(`${cell.x},${cell.y}`))                           return false;
+        if (type === 'towerCable' && mapData.capacityMap.has(`${cell.x},${cell.y}`))    return false;
+    }
 
     if (type === 'towerCable') {
         let dist = Math.abs(x1 - x2) + Math.abs(y1 - y2);

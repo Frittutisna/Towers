@@ -1,4 +1,4 @@
-# Towers v1.0.4
+# Towers v1.0.5
 
 ## Changelogs
 * Localized numbers
