@@ -1,9 +1,10 @@
-# Towers v1.0.3
+# Towers v1.0.4
 
 ## Changelogs
 * Localized numbers
 * Tweaked touch interaction
 * Simplified header
+* Fixed Extra Tower checking
 
 ## Rules
 * Connect all Capacity tiles to a **Tower** within 15 cable lengths and minimize build cost/time

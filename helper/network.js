@@ -250,10 +250,10 @@ function getTowerReachableTiles(startX, startY) {
 function isValidTowerTile(x, y) {
     let key = `${x},${y}`;
 
-    if (x === mapData.startingTower.x           && y === mapData.startingTower.y)   return false;
-    if (mapData     .riverTiles     .has(key)   || mapData.mountainTiles.has(key))  return false;
-    if (mapData     .capacityMap    .has(key))                                      return false;
-    if (playerState .extraTowers    .has(key))                                      return false;
+    if (x === mapData.startingTower.x           && y === mapData.startingTower.y)                               return false;
+    if (mapData     .riverTiles     .has(key)   || mapData.mountainTiles.has    (key))                          return false;
+    if (mapData     .capacityMap    .has(key)   || mapData.capacityTiles.some   (t => t.x === x && t.y === y))  return false;
+    if (playerState .extraTowers    .has(key))                                                                  return false;
 
     return true;
 }

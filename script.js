@@ -127,10 +127,7 @@ function updateTimerUI() {document.getElementById('timerDisplay').innerText = fo
 
 function addTower(x, y) {
     let key = `${x},${y}`;
-
-    if (x === mapData.startingTower.x   && y === mapData.startingTower.y)   return;
-    if (mapData.riverTiles  .has(key)   || mapData.mountainTiles.has(key))  return;
-    if (mapData.capacityMap .has(key))                                      return;
+    if (!isValidTowerTile(x, y)) return;
 
     saveState();
     playerState.extraTowers.add(key);
