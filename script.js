@@ -264,9 +264,10 @@ function updateMetrics() {
 
     let servedCapacity  = 0;
     let totalCapacity   = mapData.capacityTiles.reduce((sum, tile) => sum + tile.capacity, 0);
+    let flowMap         = computeNetworkFlow();
 
     mapData.capacityTiles.forEach(capTile => {
-        let delivered = calculateDeliveredCapacity(capTile);
+        let delivered = flowMap.get(`${capTile.x},${capTile.y}`) || 0;
 
         if      (delivered >= capTile.capacity) servedCapacity += capTile.capacity;
         else if (delivered > 0)                 servedCapacity += delivered;

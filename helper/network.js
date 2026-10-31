@@ -91,6 +91,54 @@ function getNetworkReach(targetX, targetY, cableFilter) {
 function getCellNetworkReachToTower         (targetX, targetY) {return getNetworkReach(targetX, targetY, c => c.type !== 'towerCable')}
 function getTowerCableReachToActiveTower    (targetX, targetY) {return getNetworkReach(targetX, targetY, c => c.type === 'towerCable')}
 
+function getCellReachMap() {
+    let activeTowers    = getActiveTowers();
+    let reachMap        = new Map();
+    let queue           = [];
+
+    activeTowers.forEach(key => {
+        reachMap.set(key, 0);
+        let [x, y] = key.split(',').map(Number);
+        queue.push({ x, y, dist: 0 });
+    });
+
+    let cableAdj = new Map();
+
+    playerState.cables.forEach(c => {
+        if (c.type === 'towerCable') return;
+
+        let u = `${c.x1},${c.y1}`;
+        let v = `${c.x2},${c.y2}`;
+
+        if (!cableAdj.has(u)) cableAdj.set(u, []);
+        if (!cableAdj.has(v)) cableAdj.set(v, []);
+
+        cableAdj.get(u).push({x: c.x2, y: c.y2});
+        cableAdj.get(v).push({x: c.x1, y: c.y1});
+    });
+
+    while (queue.length > 0) {
+        let curr    = queue.shift();
+        let currKey = `${curr.x},${curr.y}`;
+
+        if (curr.dist >= CABLE_LIMIT)                           continue;
+        if (curr.dist > 0 && mapData.capacityMap.has(currKey))  continue;
+
+        let neighbors = cableAdj.get(currKey) || [];
+
+        for (let n of neighbors) {
+            let nKey = `${n.x},${n.y}`;
+
+            if (!reachMap.has(nKey) || reachMap.get(nKey) > curr.dist + 1) {
+                reachMap    .set    (nKey, curr.dist + 1);
+                queue       .push   ({x: n.x, y: n.y, dist: curr.dist + 1});
+            }
+        }
+    }
+
+    return reachMap;
+}
+
 function computeNetworkFlow() {
     let activeTowers    = getActiveTowers();
     let capMap          = new Map();
@@ -98,7 +146,8 @@ function computeNetworkFlow() {
     mapData.capacityTiles.forEach(t => capMap.set(`${t.x},${t.y}`, 0));
     if (activeTowers.size === 0 || mapData.capacityTiles.length === 0) return capMap;
 
-    let adj = new Map();
+    let reachMap    = getCellReachMap();
+    let adj         = new Map();
 
     function addEdge(u, v, cap) {
         if (!adj.has(u)) adj.set(u, []);
@@ -117,8 +166,11 @@ function computeNetworkFlow() {
     activeTowers.forEach(towerKey => {addEdge(sourceNode, towerKey, Infinity)});
 
     playerState.cables.forEach(c => {
-        let r1 = activeTowers.has(`${c.x1},${c.y1}`) ? 0 : getCellNetworkReachToTower(c.x1, c.y1);
-        let r2 = activeTowers.has(`${c.x2},${c.y2}`) ? 0 : getCellNetworkReachToTower(c.x2, c.y2);
+        let k1 = `${c.x1},${c.y1}`;
+        let k2 = `${c.x2},${c.y2}`;
+
+        let r1 = reachMap.get(k1) ?? Infinity;
+        let r2 = reachMap.get(k2) ?? Infinity;
 
         if (r1 <= CABLE_LIMIT || r2 <= CABLE_LIMIT || c.type === 'towerCable') {
             let cap = 1;
@@ -126,19 +178,16 @@ function computeNetworkFlow() {
             if      (c.type === 'large')        cap = 2;
             else if (c.type === 'towerCable')   cap = Infinity;
 
-            let u = `${c.x1},${c.y1}`;
-            let v = `${c.x2},${c.y2}`;
-
-            addEdge(u, v, cap);
-            addEdge(v, u, cap);
+            addEdge(k1, k2, cap);
+            addEdge(k2, k1, cap);
         }
     });
 
     mapData.capacityTiles.forEach(capTile => {
-        let key = `${capTile.x},${capTile.y}`;
-        let reach = activeTowers.has(key) ? 0 : getCellNetworkReachToTower(capTile.x, capTile.y);
+        let key     = `${capTile.x},${capTile.y}`;
+        let reach   = reachMap.get(key) ?? Infinity;
 
-        if (reach <= CABLE_LIMIT) addEdge(key, sinkNode, capTile.capacity)
+        if (reach <= CABLE_LIMIT) addEdge(key, sinkNode, capTile.capacity);
     });
 
     while (true) {

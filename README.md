@@ -1,10 +1,11 @@
-# Towers v1.0.5
+# Towers v1.0.6
 
 ## Changelogs
 * Localized numbers
 * Tweaked touch interaction
 * Simplified header
 * Fixed Extra Tower checking
+* Fixed redundant BFS lookup
 
 ## Rules
 * Connect all Capacity tiles to a **Tower** within 15 cable lengths and minimize build cost/time
